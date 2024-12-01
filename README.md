@@ -63,6 +63,7 @@ The project includes automated tests that verify:
 4. Use of Global Average Pooling
 5. Basic forward pass functionality
 
-The logs for seeing the test accuracy being more than 99.4% is as follows:
+The logs for seeing the test accuracy being more than 99.4% are as follows:
 
-![Test Accuracy](./test_accuracy.jpg)
+
+![test_accuracy](https://github.com/user-attachments/assets/aebcfc5b-8c92-4036-9187-71ed2a35f2f8)
