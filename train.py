@@ -4,6 +4,7 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import OneCycleLR
 from tqdm import tqdm
 import argparse
+import sys
 
 def get_dataloaders(ci_mode=False):
     use_cuda = torch.cuda.is_available()
@@ -34,7 +35,14 @@ def get_dataloaders(ci_mode=False):
 
 def train(model, device, train_loader, optimizer, scheduler, epoch):
     model.train()
-    pbar = tqdm(train_loader, desc=f'Epoch {epoch}')  # Add description
+    pbar = tqdm(train_loader, 
+                desc=f'Epoch {epoch}',
+                disable=None,
+                mininterval=10.0,
+                miniters=500,
+                file=sys.stdout,
+                leave=True)
+    
     for batch_idx, (data, target) in enumerate(pbar):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -44,8 +52,9 @@ def train(model, device, train_loader, optimizer, scheduler, epoch):
         optimizer.step()
         scheduler.step()
         
-        # Update progress bar only, don't print
-        pbar.set_description(f'epoch={epoch} loss={loss.item():.6f} batch_id={batch_idx}')
+        # Update every 500 batches instead of 100
+        if batch_idx % 500 == 0:
+            pbar.set_description(f'epoch={epoch} loss={loss.item():.6f} batch_id={batch_idx}')
 
 def test(model, device, test_loader):
     model.eval()
