@@ -11,23 +11,20 @@ def get_dataloaders(ci_mode=False):
     batch_size = 32
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
-    if ci_mode:
-        # Use smaller subset for CI
-        train_dataset = datasets.MNIST('../data', train=True, download=True,
-                                     transform=transforms.Compose([
-                                         transforms.ToTensor(),
-                                         transforms.Normalize((0.1307,), (0.3081,))
-                                     ]))
-        test_dataset = datasets.MNIST('../data', train=False,
-                                    transform=transforms.Compose([
-                                        transforms.ToTensor(),
-                                        transforms.Normalize((0.1307,), (0.3081,))
-                                    ]))
-        
-        # Use only 5000 training samples and 1000 test samples for CI
-        train_dataset = torch.utils.data.Subset(train_dataset, range(5000))
-        test_dataset = torch.utils.data.Subset(test_dataset, range(1000))
     
+    # Use full MNIST dataset (60000 training, 10000 test)
+    train_dataset = datasets.MNIST('../data', train=True, download=True,
+                                 transform=transforms.Compose([
+                                     transforms.ToTensor(),
+                                     transforms.Normalize((0.1307,), (0.3081,))
+                                 ]))
+    test_dataset = datasets.MNIST('../data', train=False,
+                                transform=transforms.Compose([
+                                    transforms.ToTensor(),
+                                    transforms.Normalize((0.1307,), (0.3081,))
+                                ]))
+    
+    # No dataset reduction even in CI mode
     train_loader = torch.utils.data.DataLoader(train_dataset,
         batch_size=batch_size, shuffle=True, **kwargs)
     test_loader = torch.utils.data.DataLoader(test_dataset,
@@ -69,6 +66,10 @@ def test(model, device, test_loader):
 
 def train_model(model, device, optimizer, epochs=20, ci_mode=False):
     train_loader, test_loader = get_dataloaders(ci_mode)
+    
+    print(f"Training samples: {len(train_loader.dataset)}")
+    print(f"Test samples: {len(test_loader.dataset)}")
+    print(f"Batches per epoch: {len(train_loader)}")
     
     scheduler = OneCycleLR(
         optimizer,
