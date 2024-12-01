@@ -41,6 +41,10 @@ jobs:
         # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
+    - name: Train Model
+      run: |
+        python train.py --epochs 20 --ci-mode  # Changed to 20 epochs
+    
     - name: Run tests
       run: |
         python -m pytest test_model.py -v

@@ -16,15 +16,15 @@ def test_parameter_count(model):
     print(f"Total parameters: {total_params}")
     assert total_params < 20000, f"Model has {total_params} parameters, which exceeds 20000"
 
-def test_model_accuracy(model):
+def test_model_accuracy(model, device):
     """Test 2: Verify model achieves > 99.40% accuracy"""
-    use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda" if use_cuda else "cpu")
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
     
-    # Train the model and get final accuracy
-    final_accuracy = train_model(model, device, optimizer, return_accuracy=True)
-    print(f"Final accuracy: {final_accuracy}")
+    # Use CI mode but keep full 20 epochs
+    final_accuracy = train_model(model, device, optimizer, 
+                               epochs=20, ci_mode=True, return_accuracy=True)
+    
+    # Keep original accuracy threshold
     assert final_accuracy > 99.40, f"Model accuracy {final_accuracy} is less than 99.40%"
 
 def test_batch_norm_usage(model):
