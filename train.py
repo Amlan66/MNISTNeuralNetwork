@@ -37,7 +37,7 @@ def train(model, device, train_loader, optimizer, scheduler, epoch):
     model.train()
     pbar = tqdm(train_loader, 
                 desc=f'Epoch {epoch}',
-                disable=None,
+                disable=False,
                 mininterval=10.0,
                 miniters=500,
                 file=sys.stdout,
@@ -54,6 +54,7 @@ def train(model, device, train_loader, optimizer, scheduler, epoch):
         
         # Update every 500 batches instead of 100
         if batch_idx % 500 == 0:
+            print(f'epoch={epoch} loss={loss.item():.6f} batch_id={batch_idx}')
             pbar.set_description(f'epoch={epoch} loss={loss.item():.6f} batch_id={batch_idx}')
 
 def test(model, device, test_loader):
