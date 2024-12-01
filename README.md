@@ -54,13 +54,6 @@ The model uses a custom CNN architecture with the following key features:
 - Testing: 10,000 MNIST images
 - Normalization: mean=0.1307, std=0.3081
 
-## Performance
-
-The model achieves:
-- Training Loss: < 0.05
-- Test Accuracy: ~98.5%
-- Training Time: ~3-4 minutes on GPU
-
 ## Tests
 
 The project includes automated tests that verify:
